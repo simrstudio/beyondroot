@@ -45,18 +45,11 @@ function check_fastboot {
 
 UNAME=$(uname)
 
-# Do not need root for fastboot on Mac OS X
-if [ "$UNAME" != "Darwin" -a $(id -u) -ne 0 ]; then
-  exec sudo -E bash $0
-fi
-
 OS_VERSION=
 
 case $UNAME in
-  Darwin)
-    IFS='.' read -r major minor patch <<< $(sw_vers -productVersion)
-    OS_VERSION=$major-$minor
-    echo "Detected Mac OS X - Version: $OS_VERSION"
+  Linux)
+    echo "Detected Linux"
     ;;
   *)
     echo "Failed to detect operating system!"
@@ -73,8 +66,10 @@ if ! check_fastboot "fastboot-$UNAME-$OS_VERSION" ; then
     # lets check that one is found from the system.
     if ! which fastboot &>/dev/null; then
       echo "No 'fastboot' found in \$PATH. To install fastboot, use:"
-      echo ""
-      echo "    brew install android-sdk"
+      echo "    Debian/Ubuntu/ALT: sudo apt-get install android-tools-fastboot"
+      echo "    Fedora/Redhat/CentOS:  yum install android-tools"
+      echo "	Mageia/OpenMandriva/:  urpmi android-tools"
+      echo "	Arch:  pacman -Syu android-tools"
       echo ""
       exit 1
     else
